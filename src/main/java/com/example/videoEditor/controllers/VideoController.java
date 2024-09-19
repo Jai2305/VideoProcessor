@@ -5,9 +5,15 @@ import com.example.videoEditor.entitites.Video;
 import com.example.videoEditor.repositories.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -87,6 +93,29 @@ public class VideoController {
         videoRepository.save(video);
 
         return ResponseEntity.ok("Video uploaded successfully");
+    }
+
+    @GetMapping("/{videoId}")
+    public ResponseEntity<Resource> getVideo(@PathVariable Long videoId) {
+        // Retrieve the video entity from the database
+        Video video = videoRepository.findById(videoId).orElse(null);
+
+        if (video == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Get the file path from the video entity
+        String filePath = video.getFilePath();
+
+        File file = new File(filePath);
+
+        // Set response headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("video/mp4"));
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(new FileSystemResource(file));
     }
 }
 
