@@ -52,7 +52,7 @@ public class VideoEditController {
 
         // Get and Run Ffmpeg command to trim the video
         String[] ffmpegCommand = FfmpegHelper.getTrimCommand(inputFilePath, startTime, endTime, trimmedFilePath.toString());
-        FfmpegHelper.runCommand(ffmpegCommand);
+        FfmpegHelper.executeFfmpegCommand(ffmpegCommand);
 
         // Create a Resource object for the trimmed video
         File file = new File(trimmedFilePath.toString());
