@@ -45,6 +45,12 @@
 			<artifactId>hibernate-community-dialects</artifactId>
 			<version>6.2.7.Final</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.bytedeco/ffmpeg -->
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>ffmpeg</artifactId>
+			<version>6.1.1-1.5.10</version>
+		</dependency>
 
 
 		<dependency>

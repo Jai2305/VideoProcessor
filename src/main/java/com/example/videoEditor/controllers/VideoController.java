@@ -3,6 +3,8 @@ package com.example.videoEditor.controllers;
 
 import com.example.videoEditor.entitites.Video;
 import com.example.videoEditor.repositories.VideoRepository;
+import com.example.videoEditor.services.VideoService;
+import com.example.videoEditor.utils.VideoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -26,71 +28,36 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
+
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/videos")
 public class VideoController {
 
-    @Value("${video.max.size}")
-    private long maxSize;
-
-    @Value("${video.min.duration}")
-    private long minDuration;
-
-    @Value("${video.max.duration}")
-    private long maxDuration;
-
-    private final VideoRepository videoRepository;
-    private final String directoryPath = "videos";
+    private final VideoService videoService;
 
     @Autowired
-    public VideoController(VideoRepository videoRepository){
-        this.videoRepository = videoRepository;
-    }
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    public File createDirectoryIfNotExists(String directoryPath) throws IOException {
-        File directory = new File(directoryPath);
-
-        if (!directory.exists()) {
-            if (directory.mkdirs()) {
-                System.out.println("Directory created successfully: " + directoryPath);
-            } else {
-                System.out.println("Failed to create directory: " + directoryPath);
-            }
-        } else {
-            System.out.println("Directory already exists: " + directoryPath);
-        }
-        return directory;
+    public VideoController(VideoService videoService){
+        this.videoService = videoService;
     }
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadVideo(@RequestParam("file") MultipartFile file) throws IOException {
         // Validate file size and content type
         long fileSizeMb = file.getSize()/1000000;
-        if (fileSizeMb > maxSize) {
+        if (fileSizeMb > VideoHelper.maxSize) {
             return ResponseEntity.badRequest().body("File size exceeds limit");
         }
-        System.out.println(file.getOriginalFilename());
-        // Generate a unique filename
-        String filename = UUID.randomUUID() + "." + Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
-
-
-        File  directory = createDirectoryIfNotExists(directoryPath);
-
-        System.out.println(directory.getAbsolutePath());
-        Path filePath = Paths.get(directoryPath, filename);
+        // Copy the file contents to new file with unique file name
+        String filename = UUID.randomUUID() + "." + VideoHelper.getFileExtension(file);
+        File  directory = VideoHelper.createDirectoryIfNotExists(VideoHelper.directoryPath);
+        Path filePath = Paths.get(directory.getAbsolutePath(), filename);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         // Create a Video entity and save it to the database
-        Video video = new Video();
-        video.setTitle(filename);
-        video.setDescription("Video description");
-        video.setFilePath(filePath.toString());
-        videoRepository.save(video);
+        Video video = videoService.saveVideo(filename,"Desc",filePath.toString());
 
         return ResponseEntity.ok("Video uploaded successfully");
     }
@@ -98,20 +65,18 @@ public class VideoController {
     @GetMapping("/{videoId}")
     public ResponseEntity<Resource> getVideo(@PathVariable Long videoId) {
         // Retrieve the video entity from the database
-        Video video = videoRepository.findById(videoId).orElse(null);
-
+        Video video = videoService.findVideo(videoId);
         if (video == null) {
             return ResponseEntity.notFound().build();
         }
 
         // Get the file path from the video entity
         String filePath = video.getFilePath();
-
         File file = new File(filePath);
 
         // Set response headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("video/mp4"));
+        headers.setContentType(MediaType.parseMediaType(VideoHelper.MEDIA_TYPE_MP4));
 
         return ResponseEntity.ok()
                 .headers(headers)
