@@ -22,12 +22,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/edit")
-public class VideoEditController {
+public class VideoTrimController {
 
     private final VideoService videoService;
 
     @Autowired
-    public VideoEditController(VideoService videoService){
+    public VideoTrimController(VideoService videoService){
         this.videoService = videoService;
     }
 

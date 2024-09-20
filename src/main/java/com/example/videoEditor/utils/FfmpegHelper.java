@@ -24,6 +24,18 @@ public class FfmpegHelper {
                 trimmedFilePath
         };
     }
+    // Generate FFmpeg command to merge videos
+    public static String[] getMergeCommand(String clipsListPath, String outputPath){
+       return new String[] {
+                "ffmpeg",
+                "-y", // replace the existing file with same path
+                "-f", "concat",         // Concat mode
+                "-safe", "0",           // Allow file paths with unsafe characters
+                "-i", clipsListPath, // File list input
+                "-c", "copy",           // Copy video/audio streams without re-encoding
+                outputPath // Output file path
+       };
+    }
 
     // Generate FFmpeg command to get duration
     public static String[] getDurationCommand(String videoFilePath) {

@@ -3,7 +3,6 @@ package com.example.videoEditor.controllers;
 
 import com.example.videoEditor.entitites.Video;
 import com.example.videoEditor.services.VideoService;
-import com.example.videoEditor.utils.FfmpegHelper;
 import com.example.videoEditor.utils.VideoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
