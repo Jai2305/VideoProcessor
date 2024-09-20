@@ -34,17 +34,17 @@ public class VideoEditController {
     @GetMapping("/{videoId}/trim/{startTime}/{endTime}")
     public ResponseEntity<?> getTrimmedVideo(@PathVariable Long videoId, @PathVariable Long startTime,
                                              @PathVariable Long endTime) throws IOException, InterruptedException {
-        // Validate request
-        String validationMessage  = videoService.validate(startTime, endTime);
-        if(!validationMessage.equalsIgnoreCase("success")){
-            ResponseEntity.badRequest().body(validationMessage);
-        }
-
         // Retrieve video from database
         Video video = videoService.findVideo(videoId);
         if (video == null) {
             return ResponseEntity.notFound().build();
         }
+        // Validate request
+        String validationMessage  = videoService.validate(startTime, endTime, video.getFilePath());System.out.println(validationMessage);
+        if(!validationMessage.equalsIgnoreCase("success")){
+            return ResponseEntity.badRequest().body(validationMessage);
+        }
+
         String inputFilePath = video.getFilePath();
         String trimmedFilename = UUID.randomUUID()+".mp4";
         File  directory = VideoHelper.createDirectoryIfNotExists(VideoHelper.directoryPath);

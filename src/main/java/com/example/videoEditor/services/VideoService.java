@@ -2,8 +2,11 @@ package com.example.videoEditor.services;
 
 import com.example.videoEditor.entitites.Video;
 import com.example.videoEditor.repositories.VideoRepository;
-import org.springframework.http.ResponseEntity;
+import com.example.videoEditor.utils.FfmpegHelper;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 @Service
 public class VideoService {
@@ -28,12 +31,18 @@ public class VideoService {
         return videoRepository.findById(videoId).orElse(null);
     }
 
-    public String validate(Long startTime, Long endTime) {
+    public String validate(Long startTime, Long endTime, String filePath) {
+        long videoDuration;
+        try {
+            videoDuration = FfmpegHelper.getVideoDuration(filePath);
+        } catch (InterruptedException | IOException e) {
+            return "Validation failed: "+ Arrays.toString(e.getStackTrace());
+        }
         // Validate start and end times
         if (startTime < 0 || endTime < 0 || startTime >= endTime) {
             return "Invalid start or end time";
         }
-        if (endTime > 100) {
+        if (endTime > videoDuration) {
             return "End time cannot be greater than video duration";
         }
         return "success";

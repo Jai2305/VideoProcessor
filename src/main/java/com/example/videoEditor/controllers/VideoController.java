@@ -2,15 +2,12 @@ package com.example.videoEditor.controllers;
 
 
 import com.example.videoEditor.entitites.Video;
-import com.example.videoEditor.repositories.VideoRepository;
 import com.example.videoEditor.services.VideoService;
+import com.example.videoEditor.utils.FfmpegHelper;
 import com.example.videoEditor.utils.VideoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
 import java.util.UUID;
 
 
@@ -69,6 +65,7 @@ public class VideoController {
         if (video == null) {
             return ResponseEntity.notFound().build();
         }
+
 
         // Get the file path from the video entity
         String filePath = video.getFilePath();
