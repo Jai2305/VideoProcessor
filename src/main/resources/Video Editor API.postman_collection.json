@@ -1,0 +1,199 @@
+{
+	"info": {
+		"_postman_id": "93fca5fc-7ac1-413a-81a8-848217325e4d",
+		"name": "Video Editor API",
+		"description": "API collection for video sharing, uploading, trimming, merging, and downloading functionality.\n\nAll api requests are validated via static authorization token which have to be provided by Headers in the request , for initial phase **add Header** with **key** `Authorization` and **Value** `Token`",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19125732"
+	},
+	"item": [
+		{
+			"name": "Share Video",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "localhost:8080/share/:videoId",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"share",
+						":videoId"
+					],
+					"variable": [
+						{
+							"key": "videoId"
+						}
+					]
+				},
+				"description": "This endpoint allows sharing a video by generating a unique share token. Replace `:videoId` with the actual video ID. The request will result in a link and users can directly use the link to access the video file."
+			},
+			"response": []
+		},
+		{
+			"name": "Download Video",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/download/:shareToken",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"download",
+						":shareToken"
+					],
+					"variable": [
+						{
+							"key": "shareToken"
+						}
+					]
+				},
+				"description": "This endpoint allows downloading a shared video using a token. Replace `:shareToken` with the token provided by the share endpoint."
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Video",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"value": "",
+							"type": "file"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/api/videos/upload",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"videos",
+						"upload"
+					]
+				},
+				"description": "This endpoint allows uploading a video file. Upload the file using form-data with the key `file`."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Video",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/videos/:videoId",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"videos",
+						":videoId"
+					],
+					"variable": [
+						{
+							"key": "videoId"
+						}
+					]
+				},
+				"description": "This endpoint retrieves a video by its ID. Replace `:videoId` with the actual video ID."
+			},
+			"response": []
+		},
+		{
+			"name": "Merge Videos",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "clips",
+							"value": "",
+							"description": "Upload multiple video clips to be merged.",
+							"type": "file"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/api/edit/merge",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"edit",
+						"merge"
+					]
+				},
+				"description": "This endpoint accepts multiple video clips in form-data (key: `clips`) and merges them into a single video file."
+			},
+			"response": []
+		},
+		{
+			"name": "Trim Video",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/edit/:videoId/trim/:startTime/:endTime",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"edit",
+						":videoId",
+						"trim",
+						":startTime",
+						":endTime"
+					],
+					"variable": [
+						{
+							"key": "videoId"
+						},
+						{
+							"key": "startTime"
+						},
+						{
+							"key": "endTime"
+						}
+					]
+				},
+				"description": "This endpoint allows trimming a video. Replace `:videoId` with the video ID, `:startTime` with the start time in seconds, and `:endTime` with the end time in seconds."
+			},
+			"response": []
+		}
+	]
+}
