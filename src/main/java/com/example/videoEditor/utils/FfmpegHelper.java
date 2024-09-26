@@ -64,7 +64,7 @@ public class FfmpegHelper {
 
     // Run any FFmpeg command and log the output
     public static void executeFfmpegCommand(String[] ffmpegCommand) throws IOException, InterruptedException {
-        Process process = runFfmpegCommand(ffmpegCommand, new File("X:/")); // Change directory as needed
+        Process process = runFfmpegCommand(ffmpegCommand, null); // Change directory as needed
 
         logOutputForInputStream(process.getInputStream());
 
